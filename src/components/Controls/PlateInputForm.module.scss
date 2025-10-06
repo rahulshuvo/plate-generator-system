@@ -1,0 +1,133 @@
+@import '@/styles/main.scss';
+.plateInputForm {
+  position: relative;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background-color: $gray;
+  height: 72px;
+  width: 516px;
+  padding: 16px;
+  border-radius: 8px;
+  @include desktop-down {
+    width: 100%;
+  }
+  .errorTooltip{
+    position: absolute;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    top: -15px;
+    left: 0;
+    z-index: 10;
+    background-color: #ef4444;
+    border-radius: 8px;
+    color: white;
+    font-size: 12px;
+    font-weight: 200;
+    padding: 4px 8px;
+  }
+  .connector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    size: 24px;
+  }
+
+  .inputContainer {
+    display: flex;
+    flex-direction: column;
+  }
+  .index {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    border-radius: 8px;
+    font-weight: 700;
+    background-color: white;
+    border: 1px solid black;
+    height: 35px;
+    width: 35px;
+    min-width: 35px;
+  }
+  .removeButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    min-width: 24px;
+    min-height: 24px;
+    size: 24px;
+    background: #fed0d0;
+    border-radius: 50%;
+  }
+
+  .label {
+    display: none;
+    justify-content: space-between;
+    font-size: 14px;
+    font-weight: 600;
+    .subLabel {
+      font-size: 10px;
+      font-weight: 400;
+    }
+  }
+
+  .input {
+    border-radius: 8px;
+    height: 40px;
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    :global(.ant-input) {
+      text-align: center;
+    }
+    &:hover,
+    &:focus,
+    &:focus-within {
+      border-color: #d9d9d9 !important;
+      box-shadow: none !important;
+      outline: none !important;
+    }
+    :global(.ant-input-suffix) {
+      font-family: inherit;
+      font-weight: normal;
+      font-size: 1rem;
+    }
+  }
+  .inputError{
+    border: 1px solid red !important;
+    background: rgba($color: red, $alpha: .08);
+    &:hover, &:focus, &:focus-within {
+      border: 1px solid red !important;
+    }
+  }
+  .underLabel {
+    display: none;
+    font-size: 12px;
+    font-weight: 400;
+    text-align: center;
+    margin-top: 8px;
+  }
+}
+
+.plateInputFormActive {
+  height: 128px;
+  .index {
+    background: black;
+    color: white;
+  }
+  .label {
+    display: flex;
+  }
+  .input {
+    height: 44px;
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+  .underLabel {
+    display: block;
+  }
+}

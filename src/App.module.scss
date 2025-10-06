@@ -1,0 +1,30 @@
+
+@import '@/styles/main.scss';
+
+.app {
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  gap: 20px;
+  
+  @include desktop-down {
+    flex-direction: column;
+  }
+}
+
+.platePreview {
+  flex: 1;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: $secondary-color;
+}

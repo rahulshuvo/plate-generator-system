@@ -1,0 +1,13 @@
+@import '@/styles/main.scss';
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1.74rem;
+  background-color: #fff;
+  
+  @include desktop-down {
+    width: 100%;
+    gap: 1.25rem;
+  }
+}

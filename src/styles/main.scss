@@ -1,0 +1,16 @@
+@import './variables';
+@import './mixins';
+
+// Reset default styles
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+// Base styles
+body {
+  font-family: $font-stack;
+  line-height: 1.6;
+  color: $primary-color;
+}
