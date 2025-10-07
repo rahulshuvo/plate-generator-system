@@ -1,15 +1,32 @@
-import { Input } from 'antd'
+import { Input, Tooltip } from 'antd'
 import styles from './PlateInputForm.module.scss'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { CircleAlert, Minus, X } from 'lucide-react'
 import { MESSAGES, PLATE_DIMENSIONS, VALIDATION } from '@/constants/constants'
+import type { Plate } from '@/types/plate'
 
-export default function PlateInputForm() {
+interface PlateInputFormProps {
+  plate: Plate
+  index: number
+  removePlate: (id: string) => void
+  updatePlate: (id: string, updates: Partial<Plate>) => void
+  numberOfPlates: number
+}
+
+export default function PlateInputForm({
+  plate,
+  index,
+  removePlate,
+  updatePlate,
+  numberOfPlates,
+}: PlateInputFormProps) {
   const [isActive, setIsActive] = useState(false)
-  const [width, setWidth] = useState(PLATE_DIMENSIONS.WIDTH.DEFAULT.toString())
-  const [height, setHeight] = useState(
-    PLATE_DIMENSIONS.HEIGHT.DEFAULT.toString()
-  )
+  // const [width, setWidth] = useState(PLATE_DIMENSIONS.WIDTH.DEFAULT.toString())
+  // const [height, setHeight] = useState(
+  //   PLATE_DIMENSIONS.HEIGHT.DEFAULT.toString()
+  // )
+  const [width, setWidth] = useState(plate.width.toString())
+  const [height, setHeight] = useState(plate.height.toString())
   const [widthError, setWidthError] = useState('')
   const [heightError, setHeightError] = useState('')
 
@@ -17,38 +34,45 @@ export default function PlateInputForm() {
   const lastValidWidth = useRef(PLATE_DIMENSIONS.WIDTH.DEFAULT.toString())
   const lastValidHeight = useRef(PLATE_DIMENSIONS.HEIGHT.DEFAULT.toString())
 
-    // Third validation: Check for multiple decimal separators
+  useEffect(() => {
+    setWidth(plate.width.toString())
+    setHeight(plate.height.toString())
+    lastValidWidth.current = plate.width.toString()
+    lastValidHeight.current = plate.height.toString()
+  }, [plate.width, plate.height])
+
+  // Third validation: Check for multiple decimal separators
   const validateDecimalFormat = (value: string): boolean => {
     if (!value) return true // Empty is handled by other validation
-    
+
     // Count dots and commas
     const dotCount = (value.match(/\./g) || []).length
     const commaCount = (value.match(/,/g) || []).length
-    
+
     // Should not have more than one decimal separator total
-    return (dotCount + commaCount) <= 1
+    return dotCount + commaCount <= 1
   }
 
-    // Fourth validation: Check for single decimal place only
+  // Fourth validation: Check for single decimal place only
   const validateSingleDecimal = (value: string): boolean => {
     if (!value) return true // Empty is handled by other validation
-    
+
     // Check if value has decimal separator
     const hasDot = value.includes('.')
     const hasComma = value.includes(',')
-    
+
     if (hasDot) {
       const parts = value.split('.')
       // Should have exactly 2 parts and second part should be 1 digit max
       return parts.length === 2 && parts[1].length <= 1
     }
-    
+
     if (hasComma) {
       const parts = value.split(',')
       // Should have exactly 2 parts and second part should be 1 digit max
       return parts.length === 2 && parts[1].length <= 1
     }
-    
+
     // No decimal separator is fine
     return true
   }
@@ -70,7 +94,7 @@ export default function PlateInputForm() {
     }
 
     if (!validateSingleDecimal(value)) {
-      setError('Only one decimal place allowed')
+      setError(MESSAGES.ERRORS.ONLY_ONE_DECIMAL)
       return false
     }
 
@@ -103,7 +127,8 @@ export default function PlateInputForm() {
     setError: (error: string) => void,
     lastValidRef: { current: string },
     min: number,
-    max: number
+    max: number,
+    dimension: 'width' | 'height'
   ) => {
     // Allow only numbers, dots, and commas using constant regex
     if (VALIDATION.NUMBER_REGEX.test(value)) {
@@ -119,6 +144,9 @@ export default function PlateInputForm() {
         // Only update last valid value if boundary validation passes
         if (isValid) {
           lastValidRef.current = value
+          const normalizedValue = value.replace(',', '.')
+          const numericValue = parseFloat(normalizedValue)
+          updatePlate(plate.id, { [dimension]: numericValue })
         }
       }
     }
@@ -130,7 +158,8 @@ export default function PlateInputForm() {
     setError: (error: string) => void,
     lastValidRef: { current: string },
     min: number,
-    max: number
+    max: number,
+    dimension: 'width' | 'height'
   ) => {
     // If input is empty, revert to last valid value
     if (!currentValue || currentValue.trim() === '') {
@@ -144,6 +173,9 @@ export default function PlateInputForm() {
     if (!isValid) {
       setValue(lastValidRef.current)
       setError('') // Clear error after reverting
+      const normalizedValue = lastValidRef.current.replace(',', '.')
+      const numericValue = parseFloat(normalizedValue)
+      updatePlate(plate.id, { [dimension]: numericValue })
     }
   }
   const convertToMm = (
@@ -172,9 +204,14 @@ export default function PlateInputForm() {
       className={`${styles.plateInputForm} ${
         isActive ? styles.plateInputFormActive : ''
       }`}
-      onFocus={() => setIsActive(true)}
-      onBlur={() => setIsActive(false)}
       tabIndex={-1} // For div focusable
+      onFocusCapture={() => setIsActive(true)}
+      onBlurCapture={(e) => {
+        // Only blur if focus is moving outside the container
+        if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+          setIsActive(false)
+        }
+      }}
     >
       {(widthError || heightError) && (
         <span className={styles.errorTooltip}>
@@ -182,7 +219,7 @@ export default function PlateInputForm() {
           {widthError || heightError}
         </span>
       )}
-      <div className={styles.index}>1</div>
+      <div className={styles.index}>{index + 1}</div>
       <div className={styles.inputContainer}>
         <div className={styles.label}>
           Width{' '}
@@ -203,7 +240,8 @@ export default function PlateInputForm() {
               setWidthError,
               lastValidWidth,
               PLATE_DIMENSIONS.WIDTH.MIN,
-              PLATE_DIMENSIONS.WIDTH.MAX
+              PLATE_DIMENSIONS.WIDTH.MAX,
+              'width'
             )
           }
           onBlur={() =>
@@ -213,14 +251,15 @@ export default function PlateInputForm() {
               setWidthError,
               lastValidWidth,
               PLATE_DIMENSIONS.WIDTH.MIN,
-              PLATE_DIMENSIONS.WIDTH.MAX
+              PLATE_DIMENSIONS.WIDTH.MAX,
+              'width'
             )
           }
         />
         <div className={styles.underLabel}>{widthInMm}</div>
       </div>
       <div className={styles.connector}>
-        <X />
+        <X size={16} />
       </div>
       <div className={styles.inputContainer}>
         <div className={styles.label}>
@@ -242,7 +281,8 @@ export default function PlateInputForm() {
               setHeightError,
               lastValidHeight,
               PLATE_DIMENSIONS.HEIGHT.MIN,
-              PLATE_DIMENSIONS.HEIGHT.MAX
+              PLATE_DIMENSIONS.HEIGHT.MAX,
+              'height'
             )
           }
           onBlur={() =>
@@ -252,15 +292,24 @@ export default function PlateInputForm() {
               setHeightError,
               lastValidHeight,
               PLATE_DIMENSIONS.HEIGHT.MIN,
-              PLATE_DIMENSIONS.HEIGHT.MAX
+              PLATE_DIMENSIONS.HEIGHT.MAX,
+              'height'
             )
           }
         />
         <div className={styles.underLabel}>{heightInMm}</div>
       </div>
-      <div className={styles.removeButton}>
-        <Minus color="red" size={16} />
-      </div>
+      {numberOfPlates > 1 && (
+        <Tooltip placement="rightBottom" arrow={false} title={'Delete this panel'}>
+        <div
+          className={styles.removeButton}
+          onClick={() => removePlate(plate.id)}
+          onMouseDown={(e) => e.preventDefault()}
+        >
+          <Minus color="red" size={16} />
+        </div>
+        </Tooltip>
+      )}
     </div>
   )
 }

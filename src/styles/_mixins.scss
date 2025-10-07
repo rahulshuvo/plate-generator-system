@@ -1,31 +1,5 @@
 @import './_variables';
 
-// Basic mixins (mobile-first approach)
-@mixin tablet-up {
-  @media (min-width: #{$tablet}) {
-    @content;
-  }
-}
-
-@mixin desktop-up {
-  @media (min-width: #{$desktop}) {
-    @content;
-  }
-}
-
-@mixin desktop-xl-up {
-  @media (min-width: #{$desktop-xl}) {
-    @content;
-  }
-}
-
-// Max-width mixins
-@mixin tablet-down {
-  @media (max-width: #{$tablet - 1px}) {
-    @content;
-  }
-}
-
 @mixin desktop-down {
   @media (max-width: #{$desktop - 1px}) {
     @content;

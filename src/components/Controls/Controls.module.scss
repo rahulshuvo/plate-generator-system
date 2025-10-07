@@ -1,13 +1,41 @@
 @import '@/styles/main.scss';
 
 .controls {
+  height: 100%;
+  padding-right: 10px;
+  padding-bottom: 20px;
   display: flex;
   flex-direction: column;
   gap: 1.74rem;
   background-color: #fff;
-  
+  overflow-x: hidden;
+  overflow-y: scroll;
+
   @include desktop-down {
     width: 100%;
     gap: 1.25rem;
+  }
+  .addButton {
+    height: 48px;
+    min-height: 48px;
+    width: 192px;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
+    transform: scale(1);
+    align-self: flex-end;
+    margin-bottom: 20px;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+    &:active {
+      transform: scale(0.95);
+    }
+
+    @include desktop-down {
+      width: 100%;
+      align-self: center;
+    }
   }
 }

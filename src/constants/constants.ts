@@ -65,6 +65,7 @@ export const MESSAGES = {
     INVALID_NUMBER: 'Please enter a valid number',
     MIN_VALUE: 'Value must be at least',
     MAX_VALUE: 'Value must not exceed',
+    ONLY_ONE_DECIMAL: 'Only one decimal place allowed',
     INVALID_DIMENSION: 'Please enter a valid dimension',
     OUT_OF_RANGE: 'Value is out of allowed range',
     MAX_PLATES_REACHED: 'Maximum number of plates reached',

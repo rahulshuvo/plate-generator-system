@@ -11,9 +11,11 @@
   },
   "dependencies": {
     "antd": "^5.27.4",
+    "konva": "^10.0.2",
     "lucide-react": "^0.544.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-konva": "^19.0.10",
     "zustand": "^5.0.8"
   },
   "devDependencies": {
